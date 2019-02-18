@@ -19,43 +19,59 @@ namespace MyLog
         FATAL = 35
     };
 
+    struct LogData
+    {
+    public:
+        LogData(const std::string & message, const std::string source, const std::string logLevelName, LogLevel logLevel)
+                : message_(message)
+                , source_(source)
+                , logLevelName_(logLevelName)
+                , logLevel_(logLevel)
+        {}
+        std::string message_;
+        std::string source_;
+        std::string logLevelName_;
+        LogLevel logLevel_;
+    };
+
     class Logger
     {
     public:
         Logger(const std::string & source):mSource(source) {}
+
         template<typename... Args>
         void warn(const std::string & message, Args&&... args)
         {
-            log(std::move(string_format(message,args...)),"WARN",LogLevel::WARN);
+            append_(std::move(string_format(message,args...)),"WARN",LogLevel::WARN);
         }
 
         template<typename... Args>
         void info(const std::string & message, Args&&... args)
         {
-            log(std::move(string_format(message,args...)),"INFO", LogLevel::INFO);
+            append_(std::move(string_format(message,args...)),"INFO", LogLevel::INFO);
         }
 
         template<typename... Args>
         void debug(const std::string & message, Args&&... args)
         {
-            log(std::move(string_format(message,args...)),"DEBUG", LogLevel::DEBUG);
+            append_(std::move(string_format(message,args...)),"DEBUG", LogLevel::DEBUG);
         }
 
         template<typename... Args>
         void error(const std::string & message, Args&&... args)
         {
-            log(std::move(string_format(message,args...)),"ERROR", LogLevel::ERROR);
+            append_(std::move(string_format(message,args...)),"ERROR", LogLevel::ERROR);
         }
 
         template<typename... Args>
         void fatal(const std::string & message, Args&&... args)
         {
-            log(std::move(string_format(message ,args...)),"FATAL",LogLevel::FATAL);
+            append_(std::move(string_format(message ,args...)),"FATAL",LogLevel::FATAL);
         }
 
     private:
 
-        inline void log(const std::string & message, const std::string logName, LogLevel logLevel)
+        inline void append_(const std::string & message, const std::string logName, LogLevel logLevel)
         {
             std::cout << "\033[0;" << logLevel << "m" << "["<< mSource <<"] ["<< logName << "] " << message << "\033[0m" <<endl;
         }
@@ -72,6 +88,7 @@ namespace MyLog
     private:
         std::string mSource;
     };
+
 }
 
 
